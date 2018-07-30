@@ -1,5 +1,4 @@
-'use strict';
-
+"use strict";
 
 /*
  * 1. Write a function that throws an error if called with invalid arguments
@@ -17,6 +16,10 @@
  */
 const combinedLength = (a, b) => {
   // CODE HERE
+  if (!Array.isArray(a) || !Array.isArray(b)) {
+    throw new TypeError("Arguments must be arrays");
+  }
+  return a.concat(b).length;
 };
 
 /*
@@ -35,9 +38,16 @@ const combinedLength = (a, b) => {
  * @param   {Array} xs list of numbers
  * @returns {Number}   sum of list
  */
-const sumArray = (xs) => {
-  // CODE HERE
-}
+const sumArray = xs => {
+  if (!Array.isArray(xs)) {
+    throw new TypeError("Argument must be an array");
+  }
+  const isNum = xs.filter(i => typeof i !== "number");
+  if (isNum.length > 0) {
+    throw new TypeError("Array must be numbers");
+  }
+  return xs.reduce((a, v) => a + v, 0);
+};
 
 /*
  * 3. Write a function that catches errors thrown by (1) and (2)
@@ -61,9 +71,17 @@ const sumArray = (xs) => {
  * @returns {String}   Message about the combined arrays
  */
 const combineAndPrint = (a, b) => {
-  // CODE HERE
+  try {
+    if (!Array.isArray(a) || !Array.isArray(b)) {
+      throw new TypeError("Both arguments must be arrays");
+    }
+    const L = combinedLength(a, b);
+    const S = sumArray(a.concat(b));
+    return `Combined length: ${L}; Combined sum of elements: ${S}`;
+  } catch (e) {
+    return "Invalid arguments: both arguments must be arrays";
+  }
 };
-
 
 /*
  * **Stretch goal -- Harder -- Optional**
@@ -83,15 +101,20 @@ const combineAndPrint = (a, b) => {
  * @param  {Function} fn Function to wrap
  * @return {Function}    Wrapped function
  */
-const wrapTryCatch = (fn) => (...args) => {
-  throw new Error('Delete this line and write your code below');
-  // CODE HERE
+const wrapTryCatch = fn => (...args) => {
+  try {
+    if (!typeof fn === "function") {
+      throw new TypeError("fn1 must be a function");
+    }
+    return fn(...args);
+  } catch (e) {
+    return undefined;
+  }
 };
-
 
 module.exports = {
   combinedLength,
   sumArray,
   combineAndPrint,
-  wrapTryCatch,
+  wrapTryCatch
 };
