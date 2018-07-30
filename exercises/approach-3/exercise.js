@@ -1,5 +1,4 @@
-'use strict';
-
+"use strict";
 
 /*
  * 1. Write a function that returns an error if called with invalid arguments
@@ -16,9 +15,11 @@
  * @returns {Number}  Combined length of a and b
  */
 const combinedLength = (a, b) => {
- // CODE HERE
+  if (!Array.isArray(a) || !Array.isArray(b)) {
+    return new TypeError("Both arguments must be arrays");
+  }
+  return a.concat(b).length;
 };
-
 
 /*
  * 2. Write a function that sums the numbers in an array and returns an error
@@ -36,10 +37,15 @@ const combinedLength = (a, b) => {
  * @param   {Array} xs list of numbers
  * @returns {Number}   sum of list
  */
-const sumArray = (xs) => {
-  //CODE HERE
-
-}
+const sumArray = xs => {
+  if (!Array.isArray(xs)) {
+    return new TypeError("xs argument must be an array");
+  }
+  if (xs.filter(int => typeof int !== "number").length > 0) {
+    return new TypeError("xs array must only be numbers");
+  }
+  return xs.reduce((a, v) => a + v, 0);
+};
 
 /*
  * 3. Write a function that handles errors returned by (1) and (2)
@@ -63,9 +69,17 @@ const sumArray = (xs) => {
  * @returns {String}   Message about the combined arrays
  */
 const combineAndPrint = (a, b) => {
-
+  if (!Array.isArray(a) || !Array.isArray(b)) {
+    return "Invalid arguments: both arguments must be arrays";
+  }
+  let L = combinedLength(a, b);
+  let S = sumArray(a.concat(b));
+  if (L instanceof TypeError || S instanceof TypeError) {
+    return "Invalid arguments: both arguments must be arrays";
+  } else {
+    return `Combined length: ${L}; Combined sum of elements: ${S}`;
+  }
 };
-
 
 /*
  * **Stretch goal -- Harder -- Optional**
@@ -85,15 +99,21 @@ const combineAndPrint = (a, b) => {
  * @param  {Function} fn Function to wrap
  * @return {Function}    Wrapped function
  */
-const wrapErrorCheck = (fn) => (...args) => {
-  return -1; // Delete this line and write your code below
-// CODE HERE
+const wrapErrorCheck = fn => (...args) => {
+  if (typeof fn === "function") {
+    const fnCheck = fn(...args);
+    if (fnCheck instanceof TypeError) {
+      return undefined;
+    } else {
+      return fn(...args);
+    }
+  }
+  return undefined;
 };
-
 
 module.exports = {
   combinedLength,
   sumArray,
   combineAndPrint,
-  wrapErrorCheck,
+  wrapErrorCheck
 };
