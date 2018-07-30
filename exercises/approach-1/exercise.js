@@ -16,7 +16,18 @@
  * @returns {undefined}    Nothing
  */
 const combinedLength = (a, b, cb) => {
-  // CODE HERE
+  if (typeof cb !== "function") {
+    throw new TypeError("cb (callback) argument must be a function");
+  }
+  // are both a and b arrays?
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return cb(null, a.length + b.length);
+  } else {
+    return cb(
+      new TypeError("Needs three arguments: array 1, array 2, callback"),
+      null
+    ); // full disclosure - you don't have to have null here :)
+  }
 };
 
 /*
@@ -37,7 +48,20 @@ const combinedLength = (a, b, cb) => {
  * @returns {undefined}   Nothing
  */
 const sumArray = (xs, cb) => {
-    //CODE HERE
+  if (typeof cb !== "function") {
+    throw new TypeError("Second argument must be a function");
+  }
+
+  if (!Array.isArray(xs)) {
+    return cb(new TypeError("First argument must be an array"), null);
+  }
+
+  const arrIsNaN = xs.filter(i => typeof i !== "number");
+  if (arrIsNaN.length > 0) {
+    return cb(new TypeError("Array must be numbers"), null);
+  }
+
+  return cb(null, xs.reduce((a, b) => a + b, 0));
 };
 
 /*
@@ -63,10 +87,18 @@ const sumArray = (xs, cb) => {
  * @returns {undefined}   Nothing
  */
 const combineAndPrint = (a, b, cb) => {
-  const errMsg = 'Invalid arguments: both arguments must be arrays';
+  const errMsg = "Invalid arguments: both arguments must be arrays";
 
   combinedLength(a, b, (err1, L) => {
-   //CODE HERE
+    if (err1) {
+      return cb(errMsg, null);
+    }
+    sumArray(a.concat(b), (err2, S) => {
+      if (err2) {
+        return cb(errMsg, null);
+      }
+      cb(null, `Combined length: ${L}; Combined sum of elements: ${S}`);
+    });
   });
 };
 
